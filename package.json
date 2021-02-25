@@ -1,0 +1,27 @@
+{
+  "name": "stackfusion-assignment",
+  "version": "1.0.0",
+  "description": "Server-Side",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jayeshuk/FormApp.git"
+  },
+  "author": "Jayesh_Ukalkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jayeshuk/FormApp/issues"
+  },
+  "homepage": "https://github.com/jayeshuk/FormApp#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.11.17",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
