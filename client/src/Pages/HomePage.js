@@ -6,58 +6,96 @@ import DisplayArea from "../Components/DisplayArea";
 // import ButtonGrp from "../Components/ButtonGroup";
 import "../Assets/style.css";
 
-var config = {
-  method: "get",
-  url: "https://api.spacexdata.com/v3/launches?limit=100",
-  headers: {
-    // Cookie: "__cfduid=d3a4f794862e712b2abd9daeac009c6c91614260982",
-  },
-};
+function HomePage() {
+  const [data, setData] = React.useState([]);
+  const [launch, setLaunch] = React.useState("");
+  const [land, setLand] = React.useState(null);
+  const [year, setYear] = React.useState("");
+  const [s, setS] = React.useState("");
+  const loading = data.length === 0;
 
-var arr = [];
-
-export default class HomePage extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: [],
+  const FetchData = async () => {
+    var config = {
+      method: "get",
+      url: `https://api.spacexdata.com/v3/launches?limit=100`,
+      headers: {
+        // Cookie: "__cfduid=d3a4f794862e712b2abd9daeac009c6c91614260982",
+      },
     };
-  }
-
-  async FetchData() {
-    var temp = await axios(config)
+    var temp = [];
+    await axios(config)
       .then(function (response) {
-        // console.log(JSON.stringify(response.data));
-        return response.data;
+        setData([]);
+        temp = [];
+        if (launch === "Succes")
+          temp = response.data.filter((a) => {
+            if (a.launch_success) {
+              return a;
+            }
+          });
+        else if (launch === "Fai")
+          temp = response.data.filter((a) => a.launch_success === false);
+        else temp = response.data;
+
+        if (land)
+          temp = temp.filter((a) => {
+            if (a.rocket.first_stage.cores[0].land_success) {
+              return a;
+            }
+          });
+        else temp = temp.slice();
+
+        if (year)
+          temp = temp.filter((a) => {
+            if (a.launch_year == year) return a;
+          });
+        else temp = temp.slice();
+
+        console.log("NEW Data", temp);
+        setData(temp.slice());
+        console.log("DATA REC:", data);
       })
       .catch(function (error) {
         console.log(error);
       });
-    this.setState({ data: temp });
-    console.log("DATA REC:", this.state.data);
-  }
+  };
 
-  componentDidMount() {
-    this.FetchData();
-  }
+  React.useEffect(() => {
+    FetchData();
+  }, [launch, land, year]);
 
-  render() {
-    const loading = this.state.data.length === 0;
-    return (
-      <div className="demo-big-content">
-        <Header
-          inverted
-          as="h1"
-          className="head"
-          style={{ padding: "2%", margin: "1%", borderRadius: 10 }}
-        >
-          <Icon name="space shuttle" /> Explor SpaceX Program
-        </Header>
-        <FilterArea />
-        <Divider />
-        <DisplayArea data={this.state.data} />
-      </div>
-    );
-  }
+  // var f = [
+  //   { val: launch, str: `&launch_succcess=${launch}` },
+  //   // { val: land, str: `&land_success=${land}` },
+  //   // { val: year, str: `&launch_year=${year}` },
+  // ];
+  // var temp_s = "";
+  // f.forEach((item) => {
+  //   if (item.val) {
+  //     temp_s = temp_s + item.str;
+  //   }
+  // });
+  // setS(temp_s);
+
+  return (
+    <div className="demo-big-content">
+      <Header
+        inverted
+        as="h1"
+        className="head"
+        style={{ padding: "2%", margin: "1%", borderRadius: 10 }}
+      >
+        <Icon name="space shuttle" /> Explor SpaceX Programs
+      </Header>
+      <FilterArea setLaunch={setLaunch} setLand={setLand} setYear={setYear} />
+      <Divider style={{ margin: "2%" }} />
+      {loading ? (
+        <h2 style={{ textAlign: "center", marginTop: "5%" }}>Loading...</h2>
+      ) : (
+        <DisplayArea data={data} />
+      )}
+    </div>
+  );
 }
+
+export default HomePage;

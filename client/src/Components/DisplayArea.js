@@ -6,14 +6,8 @@ export default class DisplayArea extends Component {
     super(props);
 
     this.state = {
-      tableData: [
-        { name: "John", age: 15, gender: "Male" },
-        { name: "Amber", age: 40, gender: "Female" },
-        { name: "Leslie", age: 25, gender: "Other" },
-        { name: "Ben", age: 70, gender: "Male" },
-      ],
       column: null,
-      //   data: this.state.tableData,
+      data: this.props.data,
       direction: null,
     };
   }
@@ -32,7 +26,7 @@ export default class DisplayArea extends Component {
                 }
                 //   onClick={() => dispatch({ type: "CHANGE_SORT", this.state.column: "name" })}
               >
-                Flight Number
+                Flight No.
               </Table.HeaderCell>
               <Table.HeaderCell
                 sorted={
@@ -66,6 +60,16 @@ export default class DisplayArea extends Component {
               </Table.HeaderCell>
               <Table.HeaderCell
                 sorted={
+                  this.state.column === "launch_status"
+                    ? this.state.direction
+                    : null
+                }
+                //   onClick={() =>dispatch({ type: "CHANGE_SORT", this.state.column: "gender" })}
+              >
+                Landing Status
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                sorted={
                   this.state.column === "details" ? this.state.direction : null
                 }
                 //   onClick={() =>dispatch({ type: "CHANGE_SORT", this.state.column: "gender" })}
@@ -75,13 +79,18 @@ export default class DisplayArea extends Component {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {this.props.data.map((item, index) => (
+            {this.state.data.map((item, index) => (
               <Table.Row key={item.flight_number}>
                 <Table.Cell>{item.flight_number}</Table.Cell>
                 <Table.Cell>{item.mission_name}</Table.Cell>
                 <Table.Cell>{item.launch_year}</Table.Cell>
                 <Table.Cell>
                   {item.launch_success ? "Success" : "Fail"}
+                </Table.Cell>
+                <Table.Cell>
+                  {item.rocket.first_stage.cores[0].land_success === null
+                    ? "N/A"
+                    : "Success"}
                 </Table.Cell>
                 <Table.Cell>
                   {item.details ? item.details : "No Details Available"}
